@@ -1,0 +1,745 @@
+{
+  "name": "My workflow 4",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "2d9e1dc6-ab9f-4cc0-b9fa-584bb3af1c16",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3ba334a5-c876-4d0f-a5d9-aa0dc356fd60",
+      "name": "Webhook",
+      "webhookId": "2d9e1dc6-ab9f-4cc0-b9fa-584bb3af1c16"
+    },
+    {
+      "parameters": {
+        "jsCode": "const fields=$input.first().json.body.data.fields;\nconst field_1=fields.find(f=>f.label===\"Full Name:\");\nconst name=field_1.value;\nconst field_2=fields.find(f=>f.label===\"Email:\");\nconst email=field_2.value;\nconst field_3=fields.find(f=>f.label===\"Leave Type:\");\nconst value=field_3.value[0];\nconst options=field_3.options.find(o=>o.id===value);\nconst leave_type=options.text;\nconst field_4=fields.find(f=>f.label===\"Start Date:\");\nconst start_date=field_4.value;\nconst field_5=fields.find(f=>f.label===\"End Date:\");\nconst end_date=field_5.value;\nconst field_6=fields.find(f=>f.label===\"Reason for leave:\");\nconst reason_for_leave=field_6.value;\n\nreturn[{\n   name,\n  email,\n  leave_type,\n  start_date,\n  end_date,\n  reason_for_leave\n}] "
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "0318445e-ae45-4c2c-b045-bc0f2d3a55f1",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=analyze thw info name{{ $json.name }}email{{ $json.email }}leave type{{ $json.leave_type }}start date{{ $json.start_date }}end date{{ $json.end_date }}reason{{ $json.reason_for_leave }}\ndont add extra information\n",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "10ebc501-73e2-4a8a-be59-f70ffae99133",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"name\":\"\",\n  \"email\":\"\",\n  \"leave_type\":\"\",\n  \"start_date\":\"\",\n  \"end_date\":\"\",\n  \"reason\":\"\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        624,
+        208
+      ],
+      "id": "866ff272-19a2-4a82-b59d-81b602ce7cd7",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "883f4864-211d-42cc-b02e-20cb19275fc7",
+              "name": "name",
+              "value": "={{ $json.output.name }}",
+              "type": "string"
+            },
+            {
+              "id": "21c601cc-c22c-49bd-8d5a-459dfff6a015",
+              "name": "email",
+              "value": "={{ $json.output.email }}",
+              "type": "string"
+            },
+            {
+              "id": "eec81d78-0d9b-45e7-97e0-65320b256e25",
+              "name": "leave_type",
+              "value": "={{ $json.output.leave_type }}",
+              "type": "string"
+            },
+            {
+              "id": "501f4019-3ed2-43d2-af23-be5e8bbbcada",
+              "name": "start_date",
+              "value": "={{ $json.output.start_date }}",
+              "type": "string"
+            },
+            {
+              "id": "77dc96ba-7163-41ef-969a-414a7cbdfdc4",
+              "name": "end_date",
+              "value": "={{ $json.output.end_date }}",
+              "type": "string"
+            },
+            {
+              "id": "3166704f-1650-4384-9355-fc43138e88b9",
+              "name": "reason",
+              "value": "={{ $json.output.reason }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        816,
+        0
+      ],
+      "id": "fc07b48d-57bb-42b8-9e07-afb38f9ee17c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1JsWo4HG5rSdPxYXYN7c4RP9P8EAq9458S9dcC5c7xxY",
+          "mode": "list",
+          "cachedResultName": "leave",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JsWo4HG5rSdPxYXYN7c4RP9P8EAq9458S9dcC5c7xxY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JsWo4HG5rSdPxYXYN7c4RP9P8EAq9458S9dcC5c7xxY/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "3e23c0a7-54fe-4d8f-a060-debdaed1c784",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "48nlxbnIeWAd3sYF",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const leaves = $input.all();\n\nconst request = $('Edit Fields').first().json;\n\n\n// Convert DD-M-YYYY / DD-MM-YYYY into YYYY-MM-DD timestamp\nfunction parseDate(value) {\n  if (!value) {\n    return null;\n  }\n\n  const parts = String(value).trim().split(\"-\");\n\n  if (parts.length !== 3) {\n    return null;\n  }\n\n  const day = Number(parts[0]);\n  const month = Number(parts[1]);\n  const year = Number(parts[2]);\n\n  if (\n    !Number.isInteger(day) ||\n    !Number.isInteger(month) ||\n    !Number.isInteger(year)\n  ) {\n    return null;\n  }\n\n  // Create UTC date to avoid timezone problems\n  const date = new Date(Date.UTC(year, month - 1, day));\n\n  // Validate date\n  if (\n    isNaN(date.getTime()) ||\n    date.getUTCFullYear() !== year ||\n    date.getUTCMonth() !== month - 1 ||\n    date.getUTCDate() !== day\n  ) {\n    return null;\n  }\n\n  return date.getTime();\n}\n\n\n// Normalize email\nfunction normalizeEmail(email) {\n  return String(email || \"\")\n    .trim()\n    .toLowerCase();\n}\n\n\n// Requested leave dates\nconst requestedStart = parseDate(request.start_date);\nconst requestedEnd = parseDate(request.end_date);\n\n\n// Check invalid dates\nif (requestedStart === null || requestedEnd === null) {\n  return [\n    {\n      json: {\n        ...request,\n        isValid: false,\n        leave_days: 0,\n        conflict: false,\n        message: \"Invalid leave dates\"\n      }\n    }\n  ];\n}\n\n\n// Check end date before start date\nif (requestedEnd < requestedStart) {\n  return [\n    {\n      json: {\n        ...request,\n        isValid: false,\n        leave_days: 0,\n        conflict: false,\n        message: \"End date cannot be before start date\"\n      }\n    }\n  ];\n}\n\n\n// Calculate leave days\nconst millisecondsPerDay = 24 * 60 * 60 * 1000;\n\nconst leaveDays =\n  Math.floor(\n    (requestedEnd - requestedStart) / millisecondsPerDay\n  ) + 1;\n\n\n// Request employee email\nconst requestEmail = normalizeEmail(request.email);\n\n\n// Check conflict\nconst conflict = leaves.some(item => {\n\n  const existing = item.json;\n\n  // Ignore empty rows\n  if (!existing.start_date || !existing.end_date) {\n    return false;\n  }\n\n\n  // Check employee email\n  const existingEmail = normalizeEmail(existing.email);\n\n  if (!requestEmail || !existingEmail) {\n    return false;\n  }\n\n  if (requestEmail !== existingEmail) {\n    return false;\n  }\n\n\n  // Parse existing leave dates\n  const existingStart = parseDate(existing.start_date);\n  const existingEnd = parseDate(existing.end_date);\n\n  if (existingStart === null || existingEnd === null) {\n    return false;\n  }\n\n\n  // Check date overlap\n  // Same date = CONFLICT\n  // Partial overlap = CONFLICT\n  // Full overlap = CONFLICT\n  return (\n    requestedStart <= existingEnd &&\n    requestedEnd >= existingStart\n  );\n});\n\n\n// Final result\nreturn [\n  {\n    json: {\n      ...request,\n      leave_days: leaveDays,\n      conflict: conflict,\n      isValid: !conflict,\n      message: conflict\n        ? \"Leave dates conflict with an existing leave request\"\n        : \"Leave request is valid\"\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1264,
+        0
+      ],
+      "id": "a44227d4-5070-4a08-9f29-62b4d8f113b0",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "01775035-501d-4d23-b816-4a8fbf89fc62",
+              "leftValue": "={{ $json.isValid }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1440,
+        0
+      ],
+      "id": "f318772c-149c-434a-9caa-e516aecee5b0",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f26dbd26-5c0a-4d09-8962-da97c0739375",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "8d0edc13-9f17-426d-a05a-bcf4d01a4f2a",
+              "name": "email",
+              "value": "={{ $json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "2d114fc0-616f-4324-b783-10b24a048a03",
+              "name": "leave_type",
+              "value": "={{ $json.leave_type }}",
+              "type": "string"
+            },
+            {
+              "id": "1ac5f285-628c-400a-8692-2bb54bebed75",
+              "name": "start_date",
+              "value": "={{ $json.start_date }}",
+              "type": "string"
+            },
+            {
+              "id": "e3088f6d-791b-466c-b10f-990ae771c3bb",
+              "name": "end_date",
+              "value": "={{ $json.end_date }}",
+              "type": "string"
+            },
+            {
+              "id": "5eae69b2-7a0d-45ef-96d2-bcf64295b884",
+              "name": "reason",
+              "value": "={{ $json.reason }}",
+              "type": "string"
+            },
+            {
+              "id": "f3ad51a9-365e-4a3f-9f38-2e7ea2d34f7d",
+              "name": "leave_days",
+              "value": "={{ $json.leave_days }}",
+              "type": "number"
+            },
+            {
+              "id": "4088746b-f1e6-4956-9c29-739d48e6a178",
+              "name": "isValid",
+              "value": "={{ $json.isValid }}",
+              "type": "boolean"
+            },
+            {
+              "id": "e041856a-d5ab-440c-ad11-a5ad0c1e5cf8",
+              "name": "message",
+              "value": "={{ $json.message }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1664,
+        -96
+      ],
+      "id": "33ecb79b-be41-4170-8689-7cea41548a63",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Write a rejection message with subject  {{ $json.name }}{{ $json.email }}{{ $json.start_date }}\n{{ $json.end_date }}{{ $json.leave_type }}{{ $json.message }}",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1664,
+        96
+      ],
+      "id": "f4b97502-41d2-4fee-b9c2-80fd49f5c6c2",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1536,
+        304
+      ],
+      "id": "a4a41c3e-8a1e-4473-ad88-2572e468b88e",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "t02EhobJ0BR1Zjz1",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"subject\":\"\",\n  \"message\":\"\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1840,
+        304
+      ],
+      "id": "604cd238-986e-48ab-a881-c9669e194196",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('If').item.json.email }}",
+        "subject": "={{ $json.output.subject }}",
+        "emailType": "text",
+        "message": "={{ $json.output.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2032,
+        96
+      ],
+      "id": "b443a268-e8a5-46ca-ae43-9a787c06730b",
+      "name": "Send a message",
+      "webhookId": "c8378c78-2fab-4b3d-903a-446e6a1c0d56",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Yvxh9dKBPm1eQRl8",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1JsWo4HG5rSdPxYXYN7c4RP9P8EAq9458S9dcC5c7xxY",
+          "mode": "list",
+          "cachedResultName": "leave",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JsWo4HG5rSdPxYXYN7c4RP9P8EAq9458S9dcC5c7xxY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JsWo4HG5rSdPxYXYN7c4RP9P8EAq9458S9dcC5c7xxY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "leave_type",
+              "displayName": "leave_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "start_date",
+              "displayName": "start_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "end_date",
+              "displayName": "end_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "reason",
+              "displayName": "reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1888,
+        -96
+      ],
+      "id": "0bef1097-979f-4c8c-83bb-05f03fdfdbe3",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "48nlxbnIeWAd3sYF",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=WRITE A MAIL WITH SUBJECT OF APPROVAL OF LEAVE  {{ $json.name }}{{ $json.leave_type }}{{ $json.start_date }}{{ $json.end_date }}{{ $json.reason }}{{ $json.leave_days }}{{ $json.message }}",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        2176,
+        -272
+      ],
+      "id": "5d75df6f-8c5d-496e-8bd9-cd35bff8ddd5",
+      "name": "AI Agent2"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.6-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        2112,
+        -48
+      ],
+      "id": "4fd9d014-a39b-4b3e-bf9d-edc7d0aa751a",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "t02EhobJ0BR1Zjz1",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"subject\":\"\",\n  \"message\":\"\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2352,
+        -64
+      ],
+      "id": "9e8d3948-83d4-4874-9046-65769e860bbe",
+      "name": "Structured Output Parser2"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Append row in sheet').item.json.email }}",
+        "subject": "={{ $json.output.subject }}",
+        "emailType": "text",
+        "message": "={{ $json.output.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2512,
+        -272
+      ],
+      "id": "d98d4061-f456-4fcb-8abb-96b9080ad3e5",
+      "name": "Send a message1",
+      "webhookId": "e67c3f42-d925-45fd-aee4-12572145031d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Yvxh9dKBPm1eQRl8",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.6-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        304,
+        208
+      ],
+      "id": "1c0f61a4-ec3f-45d6-8570-613ffd15679b",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "t02EhobJ0BR1Zjz1",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser2": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "171a911a-e9c9-4c01-83b6-4a8d0c61e540",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7312f4fb849b1bed59886309e189740109b43cea4de502fb29bbdbb59d551cd3"
+  },
+  "nodeGroups": [],
+  "id": "gnBaIPPxbOaFABSR",
+  "tags": []
+}
