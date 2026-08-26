@@ -185,3 +185,6 @@ By connecting **n8n, Google Gemini AI, Google Sheets, and Gmail**, the system pr
 ---
 
 **Built with n8n + Google Gemini AI + Google Sheets + Gmail**
+
+<img width="1920" height="1080" alt="AI Leaves Analyzer" src="https://github.com/user-attachments/assets/c392916a-2b0d-47d0-a6a7-83dfc2f1c69c" />
+
